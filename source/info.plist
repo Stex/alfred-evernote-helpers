@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.stex.alfred.evernote</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>34DA0C8E-904E-45FF-AA83-60BA88D5DF1D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>721BF231-EFBA-4D42-8353-C9B68B6CC881</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>C544542E-303C-4BC8-8C41-B44194DD5F15</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>9D615F2D-70BC-4113-B50D-703756462986</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B6BFBF33-BC9D-402B-8A1C-27358DE0F3A2</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>34DA0C8E-904E-45FF-AA83-60BA88D5DF1D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D02403BA-0585-4998-8A86-4F851944F8C1</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>E4561DDC-C13D-48D6-BF2D-9A26DE4A2F2B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>E4561DDC-C13D-48D6-BF2D-9A26DE4A2F2B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B6BFBF33-BC9D-402B-8A1C-27358DE0F3A2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>stex</string>
+	<key>description</key>
+	<string>Small helpers for Evernote</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Evernote Helpers</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>path</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.revealfile</string>
+			<key>uid</key>
+			<string>721BF231-EFBA-4D42-8353-C9B68B6CC881</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>on createNoteDir(path)
+	do shell script "rm -rf '" &amp; path &amp; "'"	do shell script "mkdir -p '" &amp; path &amp; "'"end createNoteDir
+
+on run argv
+  tell application "Evernote"
+	set notesList to selection
+	set oNote to item 1 of notesList
+	set evernoteDataFolder to (system attribute "HOME") &amp; "/Library/Containers/com.evernote.Evernote/Data"
+	tell oNote		set noteTitle to title		set noteContent to ENML content				
+	    # We have to use a temp path that Evernote has access to... and nothing outside
+        # its sandboxed container is guaranteed to be.		set notePath to evernoteDataFolder &amp; "/attachment_export/" &amp; noteTitle &amp; "/"		my createNoteDir(notePath)
+
+		# Save the note's XML content in a file we can later access.
+		# We need it to find out the correct attachment order as Evernote
+		# by default orders them by filename
+        do shell script "echo '" &amp; noteContent &amp; "' &gt; '" &amp; notePath &amp; "note.xml'"				repeat with oAttachment in attachments
+			# Save each attachment using its hash as filename.
+			# This way, we can match it to the values from the XML content later.			set noteHash to hash of oAttachment			set imgPath to notePath &amp; noteHash &amp; ".png"
+
+			write oAttachment to imgPath		end repeat	end tell
+
+    return notePath  end tell
+end run</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>6</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>E4561DDC-C13D-48D6-BF2D-9A26DE4A2F2B</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>evernote-attachments-pdf</string>
+				<key>subtext</key>
+				<string>Convert all attachments of the current note to a PDF file</string>
+				<key>text</key>
+				<string>evernote-attachments-pdf</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>D02403BA-0585-4998-8A86-4F851944F8C1</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>require "fileutils"
+require "pathname"
+
+note_path = Pathname.new(ARGV[0].strip)
+note_file = note_path.join("note.xml").to_s
+output_file = File.join(ENV["PDF_OUTPUT_FOLDER"], "#{note_path.basename}.pdf")
+
+xml = File.read(note_file)
+
+attachments = xml.scan(/en-media hash="(\w+)"/)
+  .flatten
+  .map { |a| "'" + note_path.join("#{a}.png").to_s + "'" }
+
+system("#{ENV["CONVERT_PATH"]} #{attachments.join(" ")} '#{output_file}'")
+FileUtils.rm_rf(note_path)
+
+puts output_file.to_s</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>2</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B6BFBF33-BC9D-402B-8A1C-27358DE0F3A2</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:REVEIL_IN_FINDER}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>true</string>
+						<key>outputlabel</key>
+						<string>{query}</string>
+						<key>uid</key>
+						<string>C544542E-303C-4BC8-8C41-B44194DD5F15</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>34DA0C8E-904E-45FF-AA83-60BA88D5DF1D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Saved to {query}</string>
+				<key>title</key>
+				<string>PDF successfully generated</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>9D615F2D-70BC-4113-B50D-703756462986</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string># Alfred Evernote Helpers
+
+Small helpers for Evernote I'll create over time, currently only one helper
+to export all images attached to the currently opened note (e.g. scanned through the Evernote mobile app)
+as a PDF document.
+
+## Installation
+
+Just download the alfred workflow file and open it to install it.
+
+## Helpers
+
+### `evernote-attachments-pdf`
+
+Creates a PDF file from all images attached to the currently opened node.  
+I created this as just printing the note to PDF lead to 2 side effects I didn't want:
+
+1. The note title would still be printed
+2. Evernote would add additional whitespace margin to each page, making the text smaller than it had to be.
+
+**Variables**
+
+`CONVERT_PATH`  
+To create the PDF document, you'll need `imagemagick` installed on your machine which comes with the `convert` command line tool.  
+Usually, it will reside in `/usr/local/bin`, but you can change that path if needed.
+
+`PDF_OUTPUT_FOLDER`  
+The directory the workflow will put the generated PDFs in
+
+`REVEIL_IN_FINDER`  
+Can be either `true` or `false`. If set to `true`, Finder is opened
+after creation</string>
+	<key>uidata</key>
+	<dict>
+		<key>34DA0C8E-904E-45FF-AA83-60BA88D5DF1D</key>
+		<dict>
+			<key>note</key>
+			<string>Either show the file in a new Finder window or show the output path in a notification</string>
+			<key>xpos</key>
+			<integer>675</integer>
+			<key>ypos</key>
+			<integer>195</integer>
+		</dict>
+		<key>721BF231-EFBA-4D42-8353-C9B68B6CC881</key>
+		<dict>
+			<key>xpos</key>
+			<integer>880</integer>
+			<key>ypos</key>
+			<integer>165</integer>
+		</dict>
+		<key>9D615F2D-70BC-4113-B50D-703756462986</key>
+		<dict>
+			<key>xpos</key>
+			<integer>880</integer>
+			<key>ypos</key>
+			<integer>280</integer>
+		</dict>
+		<key>B6BFBF33-BC9D-402B-8A1C-27358DE0F3A2</key>
+		<dict>
+			<key>note</key>
+			<string>Extract the correct attachment order from the note's XML content and use convert to generate a PDF file</string>
+			<key>xpos</key>
+			<integer>475</integer>
+			<key>ypos</key>
+			<integer>175</integer>
+		</dict>
+		<key>D02403BA-0585-4998-8A86-4F851944F8C1</key>
+		<dict>
+			<key>xpos</key>
+			<integer>80</integer>
+			<key>ypos</key>
+			<integer>175</integer>
+		</dict>
+		<key>E4561DDC-C13D-48D6-BF2D-9A26DE4A2F2B</key>
+		<dict>
+			<key>note</key>
+			<string>Export all attachments and the XML content of the current note into a temp folder</string>
+			<key>xpos</key>
+			<integer>280</integer>
+			<key>ypos</key>
+			<integer>175</integer>
+		</dict>
+	</dict>
+	<key>variables</key>
+	<dict>
+		<key>CONVERT_PATH</key>
+		<string>/usr/local/bin/convert</string>
+		<key>PDF_OUTPUT_FOLDER</key>
+		<string>/Users/stex/Downloads</string>
+		<key>REVEIL_IN_FINDER</key>
+		<string>false</string>
+	</dict>
+	<key>variablesdontexport</key>
+	<array>
+		<string>PDF_OUTPUT_FOLDER</string>
+	</array>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/Stex/alfred-evernote-helpers</string>
+</dict>
+</plist>
