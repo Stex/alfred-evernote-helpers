@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>com.stex.alfred.evernote</string>
+	<string>com.stex.alfred.evernote-attachments-pdf</string>
 	<key>category</key>
 	<string>Productivity</string>
 	<key>connections</key>
@@ -76,11 +76,11 @@
 	<key>createdby</key>
 	<string>stex</string>
 	<key>description</key>
-	<string>Small helpers for Evernote</string>
+	<string>Exports all attachments in a note as a single PDF file</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Evernote Helpers</string>
+	<string>Evernote: Attachments PDF</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -104,35 +104,38 @@
 				<key>escaping</key>
 				<integer>68</integer>
 				<key>script</key>
-				<string>on createNoteDir(path)
-	do shell script "rm -rf '" &amp; path &amp; "'"	do shell script "mkdir -p '" &amp; path &amp; "'"end createNoteDir
-
-on run argv
-  tell application "Evernote"
-	set notesList to selection
-	set oNote to item 1 of notesList
-	set evernoteDataFolder to (system attribute "HOME") &amp; "/Library/Containers/com.evernote.Evernote/Data"
-	tell oNote		set noteTitle to title		set noteContent to ENML content				
-	    # We have to use a temp path that Evernote has access to... and nothing outside
-        # its sandboxed container is guaranteed to be.		set notePath to evernoteDataFolder &amp; "/attachment_export/" &amp; noteTitle &amp; "/"		my createNoteDir(notePath)
-
-		# Save the note's XML content in a file we can later access.
-		# We need it to find out the correct attachment order as Evernote
-		# by default orders them by filename
-        do shell script "echo '" &amp; noteContent &amp; "' &gt; '" &amp; notePath &amp; "note.xml'"				repeat with oAttachment in attachments
-			# Save each attachment using its hash as filename.
-			# This way, we can match it to the values from the XML content later.			set noteHash to hash of oAttachment			set imgPath to notePath &amp; noteHash &amp; ".png"
-
-			write oAttachment to imgPath		end repeat	end tell
-
-    return notePath  end tell
+				<string>on run argv
+    tell application "System Events" to tell process "Evernote"	
+        set frontmost to true
+        click menu item "Export note…" of menu "File" of menu bar item "File" of menu bar 1
+        repeat until (exists first sheet of first window)
+            delay 1
+        end repeat
+        
+        tell first sheet of first window
+            keystroke "G" using {command down, shift down}
+            repeat until (exists first sheet)
+                delay 1
+            end repeat
+            
+            keystroke "~/Downloads"
+            keystroke return
+            set filename to value of text field "Save As:"
+            click button "Save"
+            
+            # Close the "Exported note to..." box, it's almost impossible to
+            # access its button regularly.
+            keystroke return
+        end tell
+        return filename
+    end tell 
 end run</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string></string>
+				<string>export_note.scpt</string>
 				<key>type</key>
-				<integer>6</integer>
+				<integer>8</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
@@ -173,26 +176,26 @@ end run</string>
 				<string>require "fileutils"
 require "pathname"
 
-note_path = Pathname.new(ARGV[0].strip)
-note_file = note_path.join("note.xml").to_s
-output_file = File.join(ENV["PDF_OUTPUT_FOLDER"], "#{note_path.basename}.pdf")
+NOTE_PATH       = Pathname.new(ARGV[0].strip)
+NOTE_XML_FILE   = NOTE_PATH.join("note.xml").to_s
+PDF_OUTPUT_FILE = File.join(ENV["PDF_OUTPUT_FOLDER"], "#{NOTE_PATH.basename}.pdf")
 
-xml = File.read(note_file)
+xml = File.read(NOTE_XML_FILE)
 
-attachments = xml.scan(/en-media hash="(\w+)"/)
+attachments = xml.scan(/hash="(\w+)"/)
   .flatten
-  .map { |a| "'" + note_path.join("#{a}.png").to_s + "'" }
+  .map { |a| "'" + NOTE_PATH.join("#{a}.png").to_s + "'" }
 
-system("#{ENV["CONVERT_PATH"]} #{attachments.join(" ")} '#{output_file}'")
-FileUtils.rm_rf(note_path)
+system("#{ENV["CONVERT_PATH"]} #{attachments.join(" ")} '#{PDF_OUTPUT_FILE}'")
+FileUtils.rm_rf(NOTE_PATH)
 
-puts output_file.to_s</string>
+puts PDF_OUTPUT_FILE.to_s</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string></string>
+				<string>create_pdf.rb</string>
 				<key>type</key>
-				<integer>2</integer>
+				<integer>8</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
@@ -216,13 +219,13 @@ puts output_file.to_s</string>
 						<key>matchstring</key>
 						<string>true</string>
 						<key>outputlabel</key>
-						<string>{query}</string>
+						<string>Open Output Folder</string>
 						<key>uid</key>
 						<string>C544542E-303C-4BC8-8C41-B44194DD5F15</string>
 					</dict>
 				</array>
 				<key>elselabel</key>
-				<string>else</string>
+				<string>Show Notification</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.conditional</string>
@@ -254,27 +257,42 @@ puts output_file.to_s</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string># Alfred Evernote Helpers
+	<string># `evernote-attachments-pdf`
 
-Small helpers for Evernote I'll create over time, currently only one helper
-to export all images attached to the currently opened note (e.g. scanned through the Evernote mobile app)
-as a PDF document.
+Simple helper workflow to export all attachments in a note as a single PDF file.
+
+Background: I use Evernote mostly as a document storage and the mobile app
+to scan various documents. Doing so creates a new note with each individual scanned
+page as image and none of the integrated methods of converting them to a single PDF worked for me:
+
+1. The note title would still be printed
+2. Evernote would add additional whitespace margin to each page, making the text smaller than it had to be.
+
+See [this blog post](https://stex.codes/programming/2020/09/02/evernote-attachment-workflow.html) for more information about the problem.
 
 ## Installation
 
 Just download the alfred workflow file and open it to install it.
 
-## Helpers
+Since the Evernote export format changed quite a bit, I needed a proper XML parser this time, meaning that the workflow depends on a gem (ox).
 
-### `evernote-attachments-pdf`
+I set up the script to use `/usr/bin/ruby` instead of `/usr/bin/env ruby` as this would resolve to a Ruby version buried somewhere deep inside macOS. This way, we know for sure which version is used, so it's easier to install the necessary gem.
 
-Creates a PDF file from all images attached to the currently opened node.  
-I created this as just printing the note to PDF lead to 2 side effects I didn't want:
+There are 2 ways to install `ox` for this version of ruby:
 
-1. The note title would still be printed
-2. Evernote would add additional whitespace margin to each page, making the text smaller than it had to be.
+1. Install it via the `gem` executable (not the preferred way as you'll need `sudo`)
 
-**Variables**
+```ruby
+sudo /usr/bin/gem install ox
+```
+
+2. Use a local `bundle` (preferred)
+    1. Open the workflow folder by right-clicking on the workflow name in Alfred and choosing "Open in Terminal"
+    2. Run `/usr/bin/bundle install --standalone`
+
+This will install the necessary gem inside the workflow directory without adding it to your system gems.
+
+## Variables
 
 `CONVERT_PATH`  
 To create the PDF document, you'll need `imagemagick` installed on your machine which comes with the `convert` command line tool.  
@@ -293,21 +311,21 @@ after creation</string>
 			<key>note</key>
 			<string>Either show the file in a new Finder window or show the output path in a notification</string>
 			<key>xpos</key>
-			<integer>675</integer>
+			<integer>710</integer>
 			<key>ypos</key>
 			<integer>195</integer>
 		</dict>
 		<key>721BF231-EFBA-4D42-8353-C9B68B6CC881</key>
 		<dict>
 			<key>xpos</key>
-			<integer>880</integer>
+			<integer>920</integer>
 			<key>ypos</key>
 			<integer>165</integer>
 		</dict>
 		<key>9D615F2D-70BC-4113-B50D-703756462986</key>
 		<dict>
 			<key>xpos</key>
-			<integer>880</integer>
+			<integer>920</integer>
 			<key>ypos</key>
 			<integer>280</integer>
 		</dict>
@@ -316,7 +334,7 @@ after creation</string>
 			<key>note</key>
 			<string>Extract the correct attachment order from the note's XML content and use convert to generate a PDF file</string>
 			<key>xpos</key>
-			<integer>475</integer>
+			<integer>495</integer>
 			<key>ypos</key>
 			<integer>175</integer>
 		</dict>
@@ -351,7 +369,7 @@ after creation</string>
 		<string>PDF_OUTPUT_FOLDER</string>
 	</array>
 	<key>version</key>
-	<string>1.0.0</string>
+	<string>2.0.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/Stex/alfred-evernote-helpers</string>
 </dict>
