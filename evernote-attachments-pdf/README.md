@@ -11,6 +11,12 @@ page as image and none of the integrated methods of converting them to a single 
 
 See [this blog post](https://stex.codes/programming/2020/09/02/evernote-attachment-workflow.html) for more information about the problem.
 
+**Note**: There is currently still a problem with notes that include PDF files.
+Even though the PDF files are written to disk, `convert` isn't able to properly use them.  
+When calling the `convert` command manually afterwards, everything works as expected. Do the files need some time to settle down
+or are they not available to the current process?  
+Not sure what's going on there.
+
 ## Installation
 
 Just download the alfred workflow file and open it to install it.
