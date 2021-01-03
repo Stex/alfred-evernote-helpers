@@ -11,6 +11,11 @@ page as image and none of the integrated methods of converting them to a single 
 
 See [this blog post](https://stex.codes/programming/2020/09/02/evernote-attachment-workflow.html) for more information about the problem.
 
+## Requirements
+
+* Ruby (for scripting, should be pre-installed on macOS)
+* Imagemagick (to generate the actual PDF file)
+
 ## Installation
 
 Just download the alfred workflow file and open it to install it.
