@@ -8,6 +8,19 @@
 	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
+		<key>1BF60236-1F04-458A-8662-0E920DA9FA0E</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>E4561DDC-C13D-48D6-BF2D-9A26DE4A2F2B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>34DA0C8E-904E-45FF-AA83-60BA88D5DF1D</key>
 		<array>
 			<dict>
@@ -50,7 +63,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>E4561DDC-C13D-48D6-BF2D-9A26DE4A2F2B</string>
+				<string>1BF60236-1F04-458A-8662-0E920DA9FA0E</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -99,6 +112,50 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>evernote-attachments-pdf</string>
+				<key>subtext</key>
+				<string>Convert all attachments of the current note to a PDF file</string>
+				<key>text</key>
+				<string>evernote-attachments-pdf</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>D02403BA-0585-4998-8A86-4F851944F8C1</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string></string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>install_gems.rb</string>
+				<key>type</key>
+				<integer>8</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>1BF60236-1F04-458A-8662-0E920DA9FA0E</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -143,27 +200,6 @@ end run</string>
 			<string>E4561DDC-C13D-48D6-BF2D-9A26DE4A2F2B</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>evernote-attachments-pdf</string>
-				<key>subtext</key>
-				<string>Convert all attachments of the current note to a PDF file</string>
-				<key>text</key>
-				<string>evernote-attachments-pdf</string>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>D02403BA-0585-4998-8A86-4F851944F8C1</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -306,37 +342,46 @@ Can be either `true` or `false`. If set to `true`, Finder is opened
 after creation</string>
 	<key>uidata</key>
 	<dict>
+		<key>1BF60236-1F04-458A-8662-0E920DA9FA0E</key>
+		<dict>
+			<key>note</key>
+			<string>Ensure that the necessary gem is installed</string>
+			<key>xpos</key>
+			<integer>285</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
 		<key>34DA0C8E-904E-45FF-AA83-60BA88D5DF1D</key>
 		<dict>
 			<key>note</key>
 			<string>Either show the file in a new Finder window or show the output path in a notification</string>
 			<key>xpos</key>
-			<integer>710</integer>
+			<integer>955</integer>
 			<key>ypos</key>
-			<integer>195</integer>
+			<integer>200</integer>
 		</dict>
 		<key>721BF231-EFBA-4D42-8353-C9B68B6CC881</key>
 		<dict>
 			<key>xpos</key>
-			<integer>920</integer>
+			<integer>1165</integer>
 			<key>ypos</key>
-			<integer>165</integer>
+			<integer>170</integer>
 		</dict>
 		<key>9D615F2D-70BC-4113-B50D-703756462986</key>
 		<dict>
 			<key>xpos</key>
-			<integer>920</integer>
+			<integer>1165</integer>
 			<key>ypos</key>
-			<integer>280</integer>
+			<integer>285</integer>
 		</dict>
 		<key>B6BFBF33-BC9D-402B-8A1C-27358DE0F3A2</key>
 		<dict>
 			<key>note</key>
-			<string>Extract the correct attachment order from the note's XML content and use convert to generate a PDF file</string>
+			<string>Extract the attachments as files and convert them to a single PDF file</string>
 			<key>xpos</key>
-			<integer>495</integer>
+			<integer>725</integer>
 			<key>ypos</key>
-			<integer>175</integer>
+			<integer>185</integer>
 		</dict>
 		<key>D02403BA-0585-4998-8A86-4F851944F8C1</key>
 		<dict>
@@ -348,11 +393,11 @@ after creation</string>
 		<key>E4561DDC-C13D-48D6-BF2D-9A26DE4A2F2B</key>
 		<dict>
 			<key>note</key>
-			<string>Export all attachments and the XML content of the current note into a temp folder</string>
+			<string>Export the note as XML with inline attachments</string>
 			<key>xpos</key>
-			<integer>280</integer>
+			<integer>500</integer>
 			<key>ypos</key>
-			<integer>175</integer>
+			<integer>185</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
