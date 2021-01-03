@@ -11,33 +11,22 @@ page as image and none of the integrated methods of converting them to a single 
 
 See [this blog post](https://stex.codes/programming/2020/09/02/evernote-attachment-workflow.html) for more information about the problem.
 
-**Note**: There is currently still a problem with notes that include PDF files.
-Even though the PDF files are written to disk, `convert` isn't able to properly use them.  
-When calling the `convert` command manually afterwards, everything works as expected. Do the files need some time to settle down
-or are they not available to the current process?  
-Not sure what's going on there.
-
 ## Installation
 
 Just download the alfred workflow file and open it to install it.
 
 Since the Evernote export format changed quite a bit, I needed a proper XML parser this time, meaning that the workflow depends on a gem (ox).
 
-I set up the script to use `/usr/bin/ruby` instead of `/usr/bin/env ruby` as this would resolve to a Ruby version buried somewhere deep inside macOS. This way, we know for sure which version is used, so it's easier to install the necessary gem.
+I set up the script to use `/usr/bin/ruby` instead of `/usr/bin/env ruby` as this would resolve to a Ruby version buried somewhere deep inside macOS.   
+This way, we know for sure which version is used, so it's easier to install the necessary gem.
 
-There are 2 ways to install `ox` for this version of ruby:
+The preferred way to install `ox` is by using a standalone installation inside the workflow directory:
 
-1. Install it via the `gem` executable (not the preferred way as you'll need `sudo`)
+Right-click on the workflow name in Alfred, choose "Open in Terminal" and run the following command:
 
-```ruby
-sudo /usr/bin/gem install ox
+```bash
+/usr/bin/bundle install --standalone
 ```
-
-2. Use a local `bundle` (preferred)
-    1. Open the workflow folder by right-clicking on the workflow name in Alfred and choosing "Open in Terminal"
-    2. Run `/usr/bin/bundle install --standalone`
-
-This will install the necessary gem inside the workflow directory without adding it to your system gems.
 
 ## Variables
 
@@ -51,3 +40,13 @@ The directory the workflow will put the generated PDFs in
 `REVEIL_IN_FINDER`  
 Can be either `true` or `false`. If set to `true`, Finder is opened
 after creation
+
+## TODO
+
+There is currently still a problem with notes that include PDF files.  
+Even though the PDF files are written to disk, `convert` isn't able to properly use them.
+
+When calling the `convert` command manually afterwards, everything works as expected. Do the files need some time to settle down
+or are they not available to the current process?
+
+Not sure what's going on there.
