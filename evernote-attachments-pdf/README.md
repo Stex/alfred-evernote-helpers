@@ -15,14 +15,17 @@ See [this blog post](https://stex.codes/programming/2020/09/02/evernote-attachme
 
 Just download the alfred workflow file and open it to install it.
 
-Since the Evernote export format changed quite a bit, I needed a proper XML parser this time, meaning that the workflow depends on a gem (ox).
+### Gem Installation
 
-I set up the script to use `/usr/bin/ruby` instead of `/usr/bin/env ruby` as this would resolve to a Ruby version buried somewhere deep inside macOS.   
+Since the Evernote export format changed quite a bit, I needed a proper XML parser this time, meaning that the workflow depends on a gem (`ox`).
+
+I set up the script to use `/usr/bin/ruby` instead of `/usr/bin/env ruby` as this would resolve to a Ruby version buried somewhere deep inside macOS.
 This way, we know for sure which version is used, so it's easier to install the necessary gem.
 
 The preferred way to install `ox` is by using a standalone installation inside the workflow directory:
 
-Right-click on the workflow name in Alfred, choose "Open in Terminal" and run the following command:
+1. Right-click on the workflow name in Alfred and choose "Open in Terminal"
+2. Run the following command:
 
 ```bash
 /usr/bin/bundle install --standalone
