@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 # Ensures that 'ox' is either installed as global gem or as a standalone bundled version
 begin
@@ -9,5 +9,5 @@ begin
     Bundler.setup
   end
 rescue Bundler::GemNotFound
-  puts system("/usr/bin/bundle install --standalone")
+  puts system("/usr/bin/env bundle install --standalone")
 end
