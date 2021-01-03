@@ -9,5 +9,6 @@ begin
     Bundler.setup
   end
 rescue Bundler::GemNotFound
-  puts system("/usr/bin/env bundle install --standalone")
+  puts "Installing necessary gems..."
+  system("/usr/bin/env bundle install --standalone")
 end
